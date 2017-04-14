@@ -13,128 +13,38 @@ I added three columns:
 
 # Code:
 
+
 ## Load data
 
 - download data and unzip
 
-
 ```r
-setwd("D:/Coursera/Data cleaning")
 
 download.file("https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip", "UCI-HAR-Dataset.zip")
 unzip("UCI-HAR-Dataset.zip")
 setwd("./UCI HAR Dataset")
+
 ```
 
 - load all important files
 
-
 ```r
 # test data
 Xtest <- read.table("test/X_test.txt")
-```
-
-```
-## Warning in file(file, "rt"): cannot open file 'test/X_test.txt': No such
-## file or directory
-```
-
-```
-## Error in file(file, "rt"): cannot open the connection
-```
-
-```r
 Ytest <- read.table("test/Y_test.txt", col.names = "activity")
-```
-
-```
-## Warning in file(file, "rt"): cannot open file 'test/Y_test.txt': No such
-## file or directory
-```
-
-```
-## Error in file(file, "rt"): cannot open the connection
-```
-
-```r
 subtest <- read.table("test/subject_test.txt", col.names = "subject")
-```
 
-```
-## Warning in file(file, "rt"): cannot open file 'test/subject_test.txt': No
-## such file or directory
-```
-
-```
-## Error in file(file, "rt"): cannot open the connection
-```
-
-```r
 # train data
 Xtrain <- read.table("train/X_train.txt")
-```
-
-```
-## Warning in file(file, "rt"): cannot open file 'train/X_train.txt': No such
-## file or directory
-```
-
-```
-## Error in file(file, "rt"): cannot open the connection
-```
-
-```r
 Ytrain <- read.table("train/Y_train.txt", col.names = "activity")
-```
-
-```
-## Warning in file(file, "rt"): cannot open file 'train/Y_train.txt': No such
-## file or directory
-```
-
-```
-## Error in file(file, "rt"): cannot open the connection
-```
-
-```r
 subtrain <- read.table("train/subject_train.txt", col.names = "subject")
-```
 
-```
-## Warning in file(file, "rt"): cannot open file 'train/subject_train.txt': No
-## such file or directory
-```
-
-```
-## Error in file(file, "rt"): cannot open the connection
-```
-
-```r
 # column labels
 colLabs <- read.table("features.txt", sep = " ", stringsAsFactors = FALSE)
-```
 
-```
-## Warning in file(file, "rt"): cannot open file 'features.txt': No such file
-## or directory
-```
-
-```
-## Error in file(file, "rt"): cannot open the connection
-```
-
-```r
 # activity labels
 actLabs <- read.table("activity_labels.txt", sep = " ", stringsAsFactors = FALSE)
-```
 
-```
-## Warning in file(file, "rt"): cannot open file 'activity_labels.txt': No
-## such file or directory
-```
-
-```
-## Error in file(file, "rt"): cannot open the connection
 ```
 
 ## Merge data
@@ -143,8 +53,8 @@ actLabs <- read.table("activity_labels.txt", sep = " ", stringsAsFactors = FALSE
 - create additional column specifying whether this is test or training data
 - merge test and train data
 
-
 ```r
+
 library(tidyr)
 library(dplyr)
 
@@ -166,20 +76,19 @@ allData <- bind_rows(testData, trainData)
 ## Provide descriptive variable and activity names
 
 - give variable descriptive names
-
 ```r
 colnames(allData) <- c(colLabs$V2, "set", "subject", "activity")
+
 ```
 
 - give activities descriptive names
-
 ```r
 allData$activity <- as.factor(actLabs$V2[allData$activity])
 ```
 
 ## Extract variables with mean and standard deviation
-
 ```r
+
 # get column indices with mean and std values
 meanStdIdx <- c(grep("mean",colnames(allData)),
                 grep("std",colnames(allData)))
@@ -188,12 +97,13 @@ meanStdIdx <- c(grep("mean",colnames(allData)),
 meanStdIdx <- c(meanStdIdx, ncol(allData) - c(0,1,2))
 
 allData <- allData[,meanStdIdx]
+
 ```
 
 ## Create a second, independent tidy data set with the average of each variable for each activity and each subject.
 
-
 ```r
+
 avgData <- allData %>%
             unite(ssa, subject, set, activity, sep = ".") %>%
             group_by(ssa) %>%
@@ -201,11 +111,11 @@ avgData <- allData %>%
             separate(ssa, c("subject","set","activity"), sep = "[.]")
 
 colnames(avgData)[4:ncol(avgData)] <- paste("mean", colnames(avgData)[4:ncol(avgData)], sep = "-")
+
 ```
 
 ## save data
-
 ```r
-write.table(avgData, "../tidy_avg.txt", row.name = FALSE, quote = FALSE)
+write.table(avgData, "../tidy_avg.txt", row.names = FALSE, quote = FALSE)
 ```
 
