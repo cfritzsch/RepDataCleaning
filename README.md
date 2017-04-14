@@ -7,6 +7,6 @@ The activity type ("activity") and subject ("subject") are added as columns to t
 
 Columns are extracted in which the columnname contains either "mean" or "std".
 
-The mean of each feature was calculated for each combination of subject and activity and saved to tidy_avg.txt. The file can be loaded with 
+The mean of each feature was calculated for each combination of subject and activity and saved to tidy_avg.txt. The file can be loaded with "read.table("tidy_avg.txt", header = T)"
 
 The CookBook.md file contains the code that was used to process the data and explanations of the variables in tidy_avg.txt.
